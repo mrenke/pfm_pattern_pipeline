@@ -5,10 +5,19 @@ BIDS_ROOT   = Path('/mnt_03/ds-dnumrisk')
 FMRIPREP    = BIDS_ROOT / 'derivatives' / 'fmriprep'
 FREESURFER  = BIDS_ROOT / 'derivatives' / 'freesurfer'
 
+# Per-subject overrides for FREESURFER root / fMRIPrep anat surf dir — used
+# by config_asd.py for a local single-subject FreeSurfer test. Not needed here.
+FREESURFER_OVERRIDE = {}
+ANAT_DIR_OVERRIDE   = {}
+
 # Output root — change BIDS_ROOT_OUT if the input volume runs low on disk.
 # Folder structure mirrors the input BIDS tree (derivatives/pfm_fslr/sub-XX/...).
 BIDS_ROOT_OUT = BIDS_ROOT   # e.g. Path('/mnt_04/ds-dnumrisk') if redirecting
 OUTPUT_ROOT   = BIDS_ROOT_OUT / 'derivatives' / 'pfm_fslr'
+ATLAS_DIR     = OUTPUT_ROOT / 'atlases'
+
+PLOT_DIR = Path('/mnt_AdaBD_largefiles/Data/SMILE_Data/DNumRisk/ds-dnumrisk'
+                 '/plots_and_ims/nets_PFM')
 
 # --- Tools ---
 WB_COMMAND    = '/home/ubuntu/workbench/bin_linux64/wb_command'
@@ -44,8 +53,15 @@ CM_DIST_CUTOFF_MM = 30.0   # local connections zeroed within this distance
 # --- Acquisition parameters ---
 SESSION = 'ses-1'
 TASK    = 'magjudge'
-RUNS    = list(range(1, 7))
 TR      = 2.298   # seconds
+
+ALL_SUBJECTS = list(range(1, 67))
+
+
+def get_runs(subject: str) -> list[int]:
+    """Run numbers for a subject. Fixed at 6 for all DNumRisk subjects."""
+    return list(range(1, 7))
+
 
 # --- Denoising parameters (Gordon 2017) ---
 FD_THRESHOLD = 0.2   # mm — frames above this are censored
