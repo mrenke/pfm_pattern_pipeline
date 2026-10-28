@@ -25,7 +25,9 @@ OUTPUT_ROOT = Path('/mnt_AdaBD_largefiles/Data/DNumRisk_Data/ds-asd'
 # duplicating them here.
 ATLAS_DIR = Path('/mnt_03/ds-dnumrisk/derivatives/pfm_fslr/atlases')
 # 04b / 05 / 08 run for each (names: see config.py; files: config.atlas_path)
-REFERENCES = ['gordon17', 'ca19', 'ca19magjudgeDDnr', 'gordon17chaseASDC', 'ca19chaseASDC']
+# (the sub-average maps were labelled with gordon17 / ca19 / ca19magjudgeDDnr; using a
+#  *chaseASDC ref on sub-average itself would be circular)
+REFERENCES = ['gordon17chaseASDC', 'ca19chaseASDC']
 
 PLOT_DIR = Path('/mnt_AdaBD_largefiles/Data/DNumRisk_Data/ds-asd'
                  '/plots_and_ims/nets_PFM')

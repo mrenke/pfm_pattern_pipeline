@@ -22,7 +22,8 @@ from pathlib import Path
 from neuromaps.datasets import fetch_atlas
 
 sys.path.insert(0, str(Path(__file__).parent))
-from config import OUTPUT_ROOT, HCP_ATLASES, SESSION, PLOT_DIR, REFERENCES, label_set
+from config import (OUTPUT_ROOT, HCP_ATLASES, SESSION, PLOT_DIR, REFERENCES, label_set,
+                    get_groups, GROUP_NAMES)
 from utils_01 import get_gordon17_cmap, get_CANets_cmap
 
 LABEL_SET_VMAX = {'gordon17': 17, 'ca19': 12}
@@ -89,7 +90,8 @@ def plot_networks(subject: str, ref_name: str, lh_labels: np.ndarray,
         )
         ax.set_title(f'{hemi} — {view}', fontsize=10)
 
-    fig.suptitle(f'{subject}  |  ref: {ref_name}', fontsize=14)
+    group = GROUP_NAMES.get(get_groups().get(subject), 'no group')
+    fig.suptitle(f'{subject} ({group})  |  ref: {ref_name}', fontsize=14)
     plt.tight_layout()
     return fig
 

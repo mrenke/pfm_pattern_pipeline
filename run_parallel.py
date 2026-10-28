@@ -86,6 +86,14 @@ def main() -> None:
     # which naturally keeps them out of phase.
     launch_lock = Lock()
     launched = [0]
+    print_lock = Lock()
+
+    def log(msg: str) -> None:
+        # one write per line: print() from several threads can interleave text
+        # and newline ("start sub-8409:21:40 ...")
+        with print_lock:
+            sys.stdout.write(msg + '\n')
+            sys.stdout.flush()
 
     def run_one(sub_n: int) -> tuple[int, int, float]:
         with launch_lock:
@@ -98,7 +106,7 @@ def main() -> None:
                '--dataset', args.dataset, '--subjects', str(sub_n),
                '--steps', *args.steps]
         t0 = time.perf_counter()
-        print(f'{datetime.now():%H:%M:%S}  start sub-{sub_n:02d}', flush=True)
+        log(f'{datetime.now():%H:%M:%S}  start sub-{sub_n:02d}')
         with open(out, 'w') as fh:
             rc = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT).returncode
         failed = rc != 0 or ' FAIL ' in out.read_text()
@@ -112,8 +120,8 @@ def main() -> None:
             tag = 'FAIL' if failed else 'ok'
             if failed:
                 failures.append(sub_n)
-            print(f'{datetime.now():%H:%M:%S}  [{i}/{len(subjects)}] sub-{sub_n:02d} '
-                  f'{tag}  ({minutes:.0f} min)', flush=True)
+            log(f'{datetime.now():%H:%M:%S}  [{i}/{len(subjects)}] sub-{sub_n:02d} '
+                f'{tag}  ({minutes:.0f} min)')
 
     print(f'\nDone. Failures: {sorted(failures) or "none"}')
     if failures:
