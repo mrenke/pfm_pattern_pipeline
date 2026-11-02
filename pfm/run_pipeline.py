@@ -33,7 +33,7 @@ from datetime import datetime
 # Configuration
 # ---------------------------------------------------------------------------
 SCRIPT_DIR  = Path(__file__).parent
-LOG_DIR     = SCRIPT_DIR / 'logs'
+LOG_DIR     = SCRIPT_DIR.parent / 'logs'
 
 sys.path.insert(0, str(SCRIPT_DIR))
 

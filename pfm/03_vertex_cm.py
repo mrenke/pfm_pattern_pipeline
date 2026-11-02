@@ -4,7 +4,7 @@ Step 3 — Vertex-wise correlation matrix (Gordon 2017 protocol).
 
 Computes the all-to-all cross-correlation matrix of the CIFTI timeseries
 (cortical surface vertices + subcortical voxels), loosely following Gordon 2017,
-with one known deviation from that protocol (see nets_PFM/CLAUDE.md):
+with one known deviation from that protocol (see CLAUDE.md):
   - Correlations between same-hemisphere surface nodes within 30 mm are set to
     zero. Distance is approximated as Euclidean between midthickness coordinates
     rather than true geodesic (geodesic would require a much more expensive

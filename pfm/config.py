@@ -21,7 +21,10 @@ if _dataset not in _DATASETS:
         f'Unknown PFM_DATASET={_dataset!r}. Choose one of: {list(_DATASETS)}'
     )
 
+import sys as _sys
+from pathlib import Path as _Path
 from importlib import import_module as _import_module
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent / 'configs'))   # config_<dataset>.py
 _module = _import_module(_DATASETS[_dataset])
 
 # Re-export everything from the active dataset config

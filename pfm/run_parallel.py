@@ -74,7 +74,7 @@ def main() -> None:
     n_cpu = os.cpu_count() or 1
     jobs = args.jobs or max(1, min(n_cpu - 1, int(0.85 * ram / args.gb_per_job)))
 
-    log_dir = SCRIPT_DIR / 'logs' / args.dataset / os.environ.get('PFM_VARIANT', '') / 'parallel'
+    log_dir = SCRIPT_DIR.parent / 'logs' / args.dataset / os.environ.get('PFM_VARIANT', '') / 'parallel'
     log_dir.mkdir(parents=True, exist_ok=True)
 
     print(f'{datetime.now():%Y-%m-%d %H:%M:%S}  dataset={args.dataset}  '

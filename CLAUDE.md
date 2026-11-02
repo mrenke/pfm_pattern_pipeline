@@ -2,6 +2,21 @@
 
 Replication of Gordon et al. 2017 (Neuron, *Precision Functional Mapping of Individual Human Brains*), previously implemented in fsaverage5 space. This version follows the original pipeline more closely, using CIFTI format and fsLR 32k space.
 
+## Repo layout
+
+```
+pfm/        pipeline scripts (01–08, run_pipeline.py, run_parallel.py, make_ref_atlas.py),
+            config.py (loader) and utils_01.py — run the commands below from pfm/
+configs/    config_<dataset>.py, one per dataset (picked by PFM_DATASET)
+projects/   per-dataset notebooks about the maps themselves: QC, group averages, references
+docs/       PFM_methods.md, pipeline_comparison.md, QC_pfm_nsi.md
+logs/       run logs (git-ignored)
+```
+
+Split out of `parietal_patterns/nets_PFM/` on 2026-11-02 with its git history. What belongs here:
+everything that produces PFMs and reference maps (Methods). Group comparisons that answer a
+research question stay in the study repos (Results) — see "Study analyses" below.
+
 ## Goal
 
 Generate individual-specific functional connectomes (parcel-to-parcel correlation matrices) in fsLR 32k space, then run Infomap-based network parcellation.
@@ -17,7 +32,7 @@ Generate individual-specific functional connectomes (parcel-to-parcel correlatio
 ## Multi-dataset config
 
 All scripts do `from config import X`. `config.py` is a thin loader that re-exports
-`config_<dataset>.py` based on the `PFM_DATASET` env var (default `dnumrisk`):
+`configs/config_<dataset>.py` based on the `PFM_DATASET` env var (default `dnumrisk`):
 ```bash
 python 01_denoise.py sub-01                  # dnumrisk (default)
 PFM_DATASET=asd python 01_denoise.py sub-01  # ds-asd
@@ -381,31 +396,14 @@ QC, or comparison with other datasets. Requires `--parc` at runtime.
   atlases/      reference atlases (see "Reference atlases") + README.md
 ```
 
-## Analysis Notebooks
+## Study analyses (not in this repo)
 
-### `npc_net_ana.ipynb` — NPC Network Sizes & DAN Patch Topology
-
-> **Final reported version (DD paper, Fig. 2):** `prep_results/paperDD_neuralFig2.ipynb` —
-> NPC Visual2/DAN composition + group-average DAN patches, `ca19magjudgeDDnr`, **66 subjects**
-> (sub-05 included on 5 runs). Use that notebook's numbers for reporting; this one is the
-> exploratory full breakdown.
-
-Two group-level analyses on completed PFM results (DD = group 1, TD = group 0). Note: the
-notebook's intro says "65 subjects, sub-05 excluded", but the exclusion line is commented
-out — sub-05 (5 runs) is included; the p-values below may predate that:
-
-**1. Network sizes within the NPC mask**
-- Restricts to a parietal NPC (numerosity processing cortex) ROI via `get_NPC_mask(space='fslr_den-32k', hemi='both')`.
-- Quantifies how much surface area each functional network occupies within the NPC mask per subject — three metrics: vertex count, template area, individual anatomy area (cm²).
-- Group comparison (uncorrected t-test + Bonferroni): **DAN significantly smaller in DD** (p_bonf = 0.043); **Visual2 significantly larger in DD** (p_bonf = 0.003).
-
-**2. DAN patch topology (spatially contiguous sub-regions)**
-- Decomposes each subject's DAN into spatially contiguous patches (connected components on the fsLR 32k surface graph).
-- Reference patch names derived from the group-average `ca19magjudgeDDnr` atlas: parietal-lateral, frontal-lateral, frontal-medial-dorsal, temporal, frontal-insula, frontal-medial patches in each hemisphere. Patches < 10 vertices in the atlas are excluded.
-- Each subject patch assigned to the nearest reference patch by centroid distance (Euclidean on midthickness coordinates).
-- Size metric: summed individual anatomy area (cm²) per reference patch per subject.
-- Main comparison: bilateral parietal DAN patch (L_parietal-lateral + R_parietal-lateral summed).
-- Paper-ready methods writeup (whole PFM pipeline, incl. this section): `PFM_methods.md`.
+Hypothesis tests on the PFM derivatives live in the study repos and only read files from
+`OUTPUT_ROOT`. They import `config` / `utils_01` via `sys.path.insert(0, '/home/ubuntu/git/pfm_pattern_pipeline/pfm')`.
+- DD vs TD (DNumRisk): `parietal_patterns/nets_PFM/` — `npc_net_ana.ipynb` (NPC network sizes,
+  DAN patch topology), `network_size_analysis.ipynb`; final paper version
+  `parietal_patterns/prep_results/paperDD_neuralFig2.ipynb`.
+- ASD vs Control: `parietal_patterns/asd_pfm_ana/`.
 
 ## Status
 
